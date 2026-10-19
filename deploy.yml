@@ -1,5 +1,6 @@
 # This is the CD file I use to deploy my notes site
 # Like a normal GH Action you will place this in `.github/workflows` to use
+# Also put `preprocess_dataviews.py` in a `.scripts/` folder in your vault
 
 name: Build and Deploy MkDocs Site
 
@@ -8,6 +9,10 @@ on:
     branches:
       - main
 
+# Needed so `mkdocs gh-deploy` can push to the gh-pages branch
+permissions:
+  contents: write
+
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
@@ -15,11 +20,11 @@ jobs:
     steps:
       # Step 1: Checkout the repository
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Step 2: Set up Python
       - name: Setup Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -29,7 +34,7 @@ jobs:
           pip install mkdocs \
             mkdocs-material \
             mkdocs-awesome-pages-plugin \
-            pymdown-extensions>=10.0 \
+            "pymdown-extensions>=10.0" \
             mkdocs-simple-hooks
 
       # Step 4: Filter files and copy to temporary directory
@@ -56,7 +61,7 @@ jobs:
             fi
           done
           cp index.md .site_content/ || true
-          cp -r .overrides .site_content/
+          cp -r .overrides .site_content/ || true
           echo "Files containing #publish-me (excluding excluded folders), index.md, and .overrides have been copied to .site_content/"
 
       # Step 5: Preprocess Obsidian Features

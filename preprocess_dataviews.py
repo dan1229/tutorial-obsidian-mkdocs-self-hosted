@@ -19,5 +19,5 @@ def process_dataview(file_path):
 
 
 # Find and process all Markdown files
-for md_file in glob.glob("docs/**/*.md", recursive=True):
+for md_file in glob.glob(".site_content/**/*.md", recursive=True):
     process_dataview(md_file)
